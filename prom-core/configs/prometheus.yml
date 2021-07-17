@@ -1,0 +1,24 @@
+global:
+  scrape_interval:     15s # By default, scrape targets every 15 seconds.
+  external_labels:
+    monitor: 'localhost'
+  query_log_file: /prometheus/query.log
+
+rule_files:
+  - '/etc/prometheus/alerts/alert.rules.yml'
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node_exporter'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['localhost:9100']
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: ['localhost:9093']
