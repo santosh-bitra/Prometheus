@@ -1,0 +1,81 @@
+---
+- hosts: all
+  vars:
+    docker_network: mynet
+
+  tasks:
+  - name: Create Prometheus User
+    user:
+      name: prometheus
+      shell: /bin/false
+      system: true
+    tags: user
+
+  - name: Create Prometheus Directory
+    file:
+      path: "{{ item }}"
+      state: directory
+      mode: 0775
+      owner: santosh
+    with_items:
+      - /etc/prometheus/conf
+      - /etc/prometheus/conf/rrules
+      - /etc/prometheus/conf/alerts
+    tags: directory
+
+  - name: Create prometheus.yml
+    file:
+      path: /etc/prometheus/prometheus.yml
+      state: touch
+      mode: 0775
+      owner: santosh
+    tags: directory
+    become: true
+
+  - name: Place configuration files
+    copy:
+      src: /home/santosh/workspace/devops/workplace/ansible/prom-core/configs/prometheus.yml
+      dest: /etc/prometheus/prometheus.yml
+      mode: 0775
+      owner: santosh
+    tags: file
+
+
+  - name: Create Data Directory for Prometheus
+    file:
+      path: /var/lib/prometheus
+      state: directory
+      mode: 0775
+      owner: santosh
+    tags: directory
+
+  - name: Start Prometheus container
+    docker_container:
+      name: prometheus-core
+      image: prom/prometheus
+#      networks_cli_compatible: no
+#      network_mode: mynet
+#      networks:
+#        - name: "{{ docker_network }}"
+#          ipv4_address:
+      user: 1000
+      ports:
+        - "9090:9090"
+      log_options:
+         max-size: "100m"
+      volumes:
+        - /etc/prometheus/prometheus.yml:/data/prometheus/prometheus.yml
+        - /var/lib/prometheus:/data/prometheus
+        - /data/prometheus:/prom/prometheus
+      hostname: "prom-core"
+      command: [ "--config.file=/etc/prometheus/prometheus.yml",
+                 "--storage.tsdb.retention=30d",
+                 "--storage.tsdb.path=/data/prometheus"]
+
+
+
+#  - name: Create Prometheus User
+#    docker_container:
+#      name: prometheus-core2
+#      image: prom/prometheus
+#      state: started
