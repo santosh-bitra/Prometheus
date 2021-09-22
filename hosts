@@ -6,4 +6,4 @@ localhost
 
 [all:vars]
 #ansible_python_interpreter=/home/santosh/workspace/devops/workplace/ansible/ansible_venv/ansible_venv/lib/python3.8
-ansible_python_interpreter=/home/santosh/workspace/devops/workplace/ansible/ansible_venv/bin/python
+#ansible_python_interpreter=/home/santosh/workspace/devops/workplace/ansible/ansible_venv_bkp/bin/python3
