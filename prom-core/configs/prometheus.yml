@@ -5,7 +5,7 @@ global:
 #  query_log_file: /prometheus/query.log
 
 rule_files:
-  - '/etc/prometheus/alerts/alert.rules.yml'
+  - 'conf/alerts/alert_rules.yml'
 
 scrape_configs:
   - job_name: 'prometheus'
